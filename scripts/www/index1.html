@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes">
+    <title>嘉麒大厦楼层导航</title>
+    <style>
+        :root {
+            --base-scale: 1;
+            --spacing-unit: 15px;
+            --font-scale: 1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f0f2f8 0%, #e8ecf4 50%, #f0f2f8 100%);
+            color: #333;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            padding: calc(var(--spacing-unit) * var(--base-scale));
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(15, 31, 92, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(26, 42, 108, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(42, 74, 140, 0.02) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: calc(var(--spacing-unit) * var(--base-scale));
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: calc(20px * var(--base-scale));
+            padding: calc(25px * var(--base-scale)) calc(40px * var(--base-scale));
+            background: linear-gradient(135deg, #0f1f5c 0%, #1a2a6c 50%, #2a4a8c 100%);
+            color: white;
+            border-radius: calc(15px * var(--base-scale));
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            animation: headerShine 8s linear infinite;
+        }
+
+        @keyframes headerShine {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(50%, 50%) rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: calc(2.5rem * var(--font-scale));
+            margin-bottom: calc(10px * var(--base-scale));
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            letter-spacing: 2px;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
+            50% { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255, 255, 255, 0.3); }
+        }
+
+        .header p {
+            font-size: calc(1.15rem * var(--font-scale));
+            opacity: 0.95;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: calc(25px * var(--base-scale));
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .floor-nav {
+            flex: 0 0 calc(320px * var(--base-scale));
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: calc(15px * var(--base-scale));
+            padding: calc(25px * var(--base-scale));
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .floor-nav h2 {
+            text-align: center;
+            margin-bottom: calc(20px * var(--base-scale));
+            padding-bottom: calc(15px * var(--base-scale));
+            border-bottom: calc(3px * var(--base-scale)) solid transparent;
+            border-image: linear-gradient(90deg, #1a2a6c, #2a4a8c) 1;
+            color: #1a2a6c;
+            font-size: calc(1.4rem * var(--font-scale));
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .floor-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: calc(3px * var(--base-scale));
+            background: linear-gradient(90deg, #0f1f5c, #1a2a6c, #2a4a8c);
+            border-radius: calc(15px * var(--base-scale)) calc(15px * var(--base-scale)) 0 0;
+        }
+
+        .floor-nav h2 {
+            text-align: center;
+            margin-bottom: calc(20px * var(--base-scale));
+            padding-bottom: calc(15px * var(--base-scale));
+            border-bottom: calc(3px * var(--base-scale)) solid transparent;
+            border-image: linear-gradient(90deg, #1a2a6c, #2a4a8c) 1;
+            color: #1a2a6c;
+            font-size: calc(1.4rem * var(--font-scale));
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .floor-nav h2::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(40px * var(--base-scale));
+            height: 3px;
+            background: #0f1f5c;
+            border-radius: 2px;
+        }
+
+        .floor-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: calc(12px * var(--base-scale));
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .floor-list li {
+            text-align: center;
+        }
+
+        .floor-list a {
+            display: block;
+            padding: calc(16px * var(--base-scale)) calc(8px * var(--base-scale));
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: calc(10px * var(--base-scale));
+            text-decoration: none;
+            color: #333;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: bold;
+            font-size: calc(1.15rem * var(--font-scale));
+            text-align: center;
+            border: calc(2px * var(--base-scale)) solid transparent;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floor-list a::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease-out, height 0.4s ease-out;
+        }
+
+        .floor-list a:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .floor-list a:hover {
+            background: linear-gradient(135deg, #1a2a6c 0%, #2a4a8c 100%);
+            color: white;
+            transform: translateY(calc(-3px * var(--base-scale))) scale(1.08);
+            box-shadow: 0 8px 16px rgba(26, 42, 108, 0.3), 0 0 30px rgba(26, 42, 108, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .floor-list a.active {
+            background: linear-gradient(135deg, #0f1f5c 0%, #1a2a6c 100%);
+            color: white;
+            transform: translateY(calc(-2px * var(--base-scale)));
+            box-shadow: 0 6px 12px rgba(26, 42, 108, 0.4), 0 0 25px rgba(26, 42, 108, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .floor-list a.active::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            pointer-events: none;
+        }
+
+        .carousel-container {
+            flex: 1;
+            background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+            border-radius: calc(15px * var(--base-scale));
+            padding: calc(20px * var(--base-scale)) calc(25px * var(--base-scale));
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            min-height: 0;
+        }
+
+        .carousel-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: calc(4px * var(--base-scale));
+            background: linear-gradient(90deg, #0f1f5c, #1a2a6c, #2a4a8c);
+        }
+
+        .carousel-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(26, 42, 108, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .carousel-title {
+            text-align: center;
+            margin-bottom: calc(15px * var(--base-scale));
+            padding-bottom: calc(12px * var(--base-scale));
+            border-bottom: calc(2px * var(--base-scale)) solid transparent;
+            border-image: linear-gradient(90deg, transparent, #e0e5f0, transparent) 1;
+            color: #1a2a6c;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .carousel-title h2 {
+            font-size: calc(1.6rem * var(--font-scale));
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: calc(5px * var(--base-scale));
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            position: relative;
+            display: inline-block;
+        }
+
+        .carousel-slide {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: calc(15px * var(--base-scale));
+            background: linear-gradient(135deg, #f8f9fa 0%, #eef2f8 50%, #f8f9fa 100%);
+            border-radius: calc(12px * var(--base-scale));
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .floor-info-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 50%, #ffffff 100%);
+            border-radius: calc(16px * var(--base-scale));
+            padding: calc(15px * var(--base-scale)) calc(20px * var(--base-scale));
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(15, 31, 92, 0.12), 0 0 0 1px rgba(15, 31, 92, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border-left: calc(6px * var(--base-scale)) solid linear-gradient(180deg, #0f1f5c, #1a2a6c);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: visible;
+            min-height: 0;
+            transition: all 0.4s ease;
+        }
+
+        .floor-info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(26, 42, 108, 0.03) 0%, transparent 60%);
+            border-radius: calc(16px * var(--base-scale));
+            pointer-events: none;
+        }
+
+        .floor-info-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 40%);
+            border-radius: calc(16px * var(--base-scale));
+            pointer-events: none;
+        }
+
+        .floor-info-card:hover {
+            box-shadow: 0 12px 40px rgba(15, 31, 92, 0.18), 0 0 0 1px rgba(15, 31, 92, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transform: translateY(calc(-2px * var(--base-scale)));
+        }
+
+        .floor-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: calc(12px * var(--base-scale));
+            padding-bottom: calc(10px * var(--base-scale));
+            border-bottom: calc(2px * var(--base-scale)) dashed rgba(26, 42, 108, 0.15);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .floor-number-large {
+            font-size: calc(2.5rem * var(--font-scale));
+            font-weight: bold;
+            color: #ffffff;
+            width: calc(65px * var(--base-scale));
+            height: calc(65px * var(--base-scale));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f1f5c 0%, #1a2a6c 50%, #2a4a8c 100%);
+            border-radius: 50%;
+            margin-right: calc(15px * var(--base-scale));
+            box-shadow: 0 6px 20px rgba(26, 42, 108, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.15), 0 0 0 3px rgba(26, 42, 108, 0.1);
+            position: relative;
+            z-index: 1;
+            animation: pulseGlow 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 6px 20px rgba(26, 42, 108, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.15), 0 0 0 3px rgba(26, 42, 108, 0.1); }
+            50% { box-shadow: 0 6px 25px rgba(26, 42, 108, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.2), 0 0 0 3px rgba(26, 42, 108, 0.15); }
+        }
+
+        .floor-number-large::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+        }
+
+        .floor-number-large::before {
+            content: '';
+            position: absolute;
+            top: calc(-5px * var(--base-scale));
+            left: calc(-5px * var(--base-scale));
+            right: calc(-5px * var(--base-scale));
+            bottom: calc(-5px * var(--base-scale));
+            border-radius: 50%;
+            border: 1px solid rgba(26, 42, 108, 0.1);
+            animation: rotateBorder 8s linear infinite;
+        }
+
+        @keyframes rotateBorder {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .floor-number-large:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(26, 42, 108, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.2), 0 0 0 4px rgba(26, 42, 108, 0.15);
+        }
+
+        .floor-name-large {
+            font-size: calc(1.8rem * var(--font-scale));
+            color: #1a2a6c;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(26, 42, 108, 0.08), 0 0 20px rgba(26, 42, 108, 0.05);
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(90deg, #1a2a6c, #2a4a8c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .floor-name-large::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #0f1f5c, #1a2a6c, #2a4a8c);
+            transition: width 0.6s ease-out;
+        }
+
+        .floor-info-card:hover .floor-name-large::after {
+            width: 100%;
+        }
+
+        .companies-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            min-height: 0;
+            width: 100%;
+        }
+
+        .companies-section h3 {
+            font-size: calc(1.2rem * var(--font-scale));
+            color: #1a2a6c;
+            margin-bottom: calc(10px * var(--base-scale));
+            padding-bottom: calc(6px * var(--base-scale));
+            border-bottom: calc(2px * var(--base-scale)) solid linear-gradient(90deg, #1a2a6c, transparent);
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(26, 42, 108, 0.08);
+            position: relative;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+
+        .companies-section h3::before {
+            content: '📋';
+            margin-right: calc(8px * var(--base-scale));
+            font-size: calc(1rem * var(--font-scale));
+        }
+
+        .companies-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(90deg, #0f1f5c, #1a2a6c);
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(26, 42, 108, 0.2);
+        }
+
+        /* 根据公司数量动态调整大小 */
+        /* 公司少（0-3家）：大号显示 */
+        .floor-info-card.few-companies {
+            padding: calc(18px * var(--base-scale)) calc(22px * var(--base-scale));
+        }
+
+        .floor-info-card.few-companies .companies-grid {
+            grid-template-columns: 1fr !important;
+            gap: calc(15px * var(--base-scale));
+            width: 100%;
+        }
+
+        .floor-info-card.few-companies .company-card {
+            padding: calc(18px * var(--base-scale));
+            width: 100%;
+        }
+
+        .floor-info-card.few-companies .company-name {
+            font-size: calc(1.3rem * var(--font-scale));
+        }
+
+        .floor-info-card.few-companies .company-industry {
+            font-size: calc(0.95rem * var(--font-scale));
+        }
+
+        .floor-info-card.few-companies .company-room {
+            font-size: calc(0.9rem * var(--font-scale));
+            padding: 3px 10px;
+        }
+
+        .floor-info-card.few-companies .floor-number-large {
+            font-size: calc(3.2rem * var(--font-scale));
+            width: calc(75px * var(--base-scale));
+            height: calc(75px * var(--base-scale));
+        }
+
+        .floor-info-card.few-companies .floor-name-large {
+            font-size: calc(2.2rem * var(--font-scale));
+        }
+
+        /* 公司中等（4-5家）：中号显示 */
+        .floor-info-card.medium-companies {
+            padding: calc(15px * var(--base-scale)) calc(18px * var(--base-scale));
+        }
+
+        .floor-info-card.medium-companies .companies-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: calc(12px * var(--base-scale));
+            width: 100%;
+        }
+
+        .floor-info-card.medium-companies .company-card {
+            padding: calc(14px * var(--base-scale));
+        }
+
+        .floor-info-card.medium-companies .company-name {
+            font-size: calc(1.15rem * var(--font-scale));
+        }
+
+        .floor-info-card.medium-companies .company-industry {
+            font-size: calc(0.9rem * var(--font-scale));
+        }
+
+        .floor-info-card.medium-companies .company-room {
+            font-size: calc(0.85rem * var(--font-scale));
+            padding: 2px 8px;
+        }
+
+        .floor-info-card.medium-companies .floor-number-large {
+            font-size: calc(2.8rem * var(--font-scale));
+            width: calc(65px * var(--base-scale));
+            height: calc(65px * var(--base-scale));
+        }
+
+        .floor-info-card.medium-companies .floor-name-large {
+            font-size: calc(1.9rem * var(--font-scale));
+        }
+
+        /* 公司多（6家以上）：小号显示 */
+        .floor-info-card.many-companies {
+            padding: calc(12px * var(--base-scale)) calc(15px * var(--base-scale));
+        }
+
+        .floor-info-card.many-companies .companies-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: calc(10px * var(--base-scale));
+            width: 100%;
+        }
+
+        .floor-info-card.many-companies .company-card {
+            padding: calc(12px * var(--base-scale));
+        }
+
+        .floor-info-card.many-companies .company-name {
+            font-size: calc(1.05rem * var(--font-scale));
+        }
+
+        .floor-info-card.many-companies .company-industry {
+            font-size: calc(0.85rem * var(--font-scale));
+        }
+
+        .floor-info-card.many-companies .company-room {
+            font-size: calc(0.8rem * var(--font-scale));
+            padding: 2px 6px;
+        }
+
+        .floor-info-card.many-companies .floor-number-large {
+            font-size: calc(2.5rem * var(--font-scale));
+            width: calc(60px * var(--base-scale));
+            height: calc(60px * var(--base-scale));
+        }
+
+        .floor-info-card.many-companies .floor-name-large {
+            font-size: calc(1.8rem * var(--font-scale));
+        }
+
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: calc(12px * var(--base-scale));
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .company-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #ffffff 100%);
+            padding: calc(14px * var(--base-scale));
+            border-radius: calc(10px * var(--base-scale));
+            border-left: calc(4px * var(--base-scale)) solid linear-gradient(180deg, #0f1f5c, #2a4a8c);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 3px 12px rgba(26, 42, 108, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: visible;
+            width: 100%;
+            min-width: 0;
+            cursor: pointer;
+        }
+
+        .company-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(26, 42, 108, 0.4), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .company-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(26, 42, 108, 0.03) 0%, transparent 60%);
+            border-radius: calc(10px * var(--base-scale));
+            pointer-events: none;
+            transition: all 0.4s ease-out;
+        }
+
+        .company-card:hover {
+            transform: translateY(calc(-6px * var(--base-scale))) scale(1.03);
+            box-shadow: 0 15px 35px rgba(26, 42, 108, 0.25), 0 0 0 1px rgba(26, 42, 108, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border-left: calc(4px * var(--base-scale)) solid #0f1f5c;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 50%, #ffffff 100%);
+        }
+
+        .company-card:hover::before {
+            opacity: 1;
+        }
+
+        .company-card:hover::after {
+            background: radial-gradient(circle at top right, rgba(26, 42, 108, 0.08) 0%, transparent 60%);
+        }
+
+        .company-name {
+            font-weight: bold;
+            font-size: calc(1.1rem * var(--font-scale));
+            color: #1a2a6c;
+            margin-bottom: calc(6px * var(--base-scale));
+            line-height: 1.3;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+            word-wrap: break-word;
+            word-break: break-all;
+            width: 100%;
+            padding-bottom: 3px;
+            border-bottom: 1px dashed rgba(26, 42, 108, 0.1);
+        }
+
+        .company-card:hover .company-name {
+            color: #0f1f5c;
+            border-bottom-color: rgba(26, 42, 108, 0.3);
+        }
+
+        .company-industry {
+            color: #4a5a6c;
+            font-size: calc(0.85rem * var(--font-scale));
+            margin-bottom: calc(4px * var(--base-scale));
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .company-industry::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(135deg, #1a2a6c, #2a4a8c);
+            border-radius: 50%;
+        }
+
+        .company-room {
+            color: #6a7a8c;
+            font-size: calc(0.8rem * var(--font-scale));
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+            display: inline-block;
+            padding: 3px 9px;
+            background: linear-gradient(135deg, rgba(26, 42, 108, 0.08), rgba(42, 74, 140, 0.12));
+            border-radius: 4px;
+            transition: all 0.3s;
+            border: 1px solid rgba(26, 42, 108, 0.1);
+        }
+
+        .company-card:hover .company-room {
+            background: linear-gradient(135deg, rgba(26, 42, 108, 0.15), rgba(42, 74, 140, 0.2));
+            border-color: rgba(26, 42, 108, 0.25);
+            transform: translateY(calc(-1px * var(--base-scale)));
+        }
+
+        /* 轮播动画 */
+        .floor-info-card {
+            opacity: 0;
+            transform: translateY(calc(15px * var(--base-scale))) scale(0.98);
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .floor-info-card.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .floor-info-card.fade-out {
+            opacity: 0;
+            transform: translateY(calc(-15px * var(--base-scale))) scale(0.98);
+        }
+
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: calc(10px * var(--base-scale));
+            margin-top: calc(15px * var(--base-scale));
+            padding: calc(8px * var(--base-scale));
+            flex-shrink: 0;
+        }
+
+        .carousel-indicator {
+            width: calc(14px * var(--base-scale));
+            height: calc(14px * var(--base-scale));
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e0e5f0, #d0d5e0);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            border: calc(2px * var(--base-scale)) solid #ffffff;
+            position: relative;
+        }
+
+        .carousel-indicator::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-indicator:hover {
+            transform: scale(1.25);
+            background: linear-gradient(135deg, #2a4a8c, #1a2a6c);
+            box-shadow: 0 5px 15px rgba(26, 42, 108, 0.4), 0 0 0 2px rgba(26, 42, 108, 0.15);
+        }
+
+        .carousel-indicator:hover::before {
+            border-color: rgba(26, 42, 108, 0.3);
+            transform: rotate(180deg);
+        }
+
+        .carousel-indicator.active {
+            background: linear-gradient(135deg, #0f1f5c, #1a2a6c);
+            transform: scale(1.5);
+            box-shadow: 0 5px 15px rgba(26, 42, 108, 0.5), 0 0 25px rgba(26, 42, 108, 0.25), 0 0 0 2px rgba(26, 42, 108, 0.2);
+            animation: indicatorPulse 2s ease-in-out infinite;
+        }
+
+        .carousel-indicator.active::before {
+            border-color: rgba(26, 42, 108, 0.4);
+        }
+
+        @keyframes indicatorPulse {
+            0%, 100% { box-shadow: 0 5px 15px rgba(26, 42, 108, 0.5), 0 0 25px rgba(26, 42, 108, 0.25), 0 0 0 2px rgba(26, 42, 108, 0.2); }
+            50% { box-shadow: 0 5px 15px rgba(26, 42, 108, 0.6), 0 0 35px rgba(26, 42, 108, 0.35), 0 0 0 2px rgba(26, 42, 108, 0.25); }
+        }
+
+        .current-floor-info {
+            position: fixed;
+            top: calc(20px * var(--base-scale));
+            right: calc(20px * var(--base-scale));
+            background: linear-gradient(135deg, #0f1f5c 0%, #1a2a6c 100%);
+            color: white;
+            padding: calc(12px * var(--base-scale)) calc(25px * var(--base-scale));
+            border-radius: calc(10px * var(--base-scale));
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(26, 42, 108, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+            z-index: 999;
+            font-size: calc(1.05rem * var(--font-scale));
+            letter-spacing: 1px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .current-floor-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+            border-radius: 10px;
+        }
+
+        .current-floor-info::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+            animation: infoShine 6s linear infinite;
+        }
+
+        @keyframes infoShine {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(50%, 50%) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>嘉麒大厦楼层导航</h1>
+            <p>共22层 • 点击左侧楼层快速导航 • 右侧显示楼层公司信息</p>
+        </div>
+        
+        <div class="content-wrapper">
+            <nav class="floor-nav">
+                <h2>楼层导航</h2>
+                <ul class="floor-list">
+                    <!-- 楼层导航列表将由JavaScript生成 -->
+                </ul>
+            </nav>
+            
+            <div class="carousel-container">
+                <div class="carousel-title">
+                    <h2>楼层公司信息</h2>
+                    <p>当前显示楼层：<span id="current-floor-display">1</span>层</p>
+                </div>
+                
+                <div class="carousel-slide">
+                    <!-- 轮播内容将由JavaScript生成 -->
+                </div>
+                
+                <div class="carousel-indicators">
+                    <!-- 轮播指示器将由JavaScript生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="current-floor-info">
+            当前楼层: <span id="current-floor">1</span>层
+        </div>
+    </div>
+
+    <script>
+        // 楼层数据 - 包含每层的公司信息
+        const floors = [
+            {
+                number: 1,
+                name: "1层",
+                companies: [
+                    { name: "嘉麒大厦前台接待服务中心", industry: "接待服务", room: "大堂中央" },
+                    { name: "汇丰银行（中国）有限公司上海分行", industry: "银行业", room: "101室" },
+                    { name: "永丰银行（中国）有限公司上海分行", industry: "银行业", room: "102室" }
+                ],
+            },
+            {
+                number: 2,
+                name: "2层",
+                companies: [
+                    { name: "汇丰银行（中国）有限公司上海分行", industry: "银行业", room: "201室" },
+                    { name: "永丰银行（中国）有限公司上海分行", industry: "银行业", room: "202室" }
+                ],
+            },
+            {
+                number: 3,
+                name: "3层",
+                companies: [
+                    { name: "永丰银行（中国）有限公司上海分行", industry: "银行业", room: "202室" }
+                ],
+            },
+            {
+                number: 4,
+                name: "4层",
+                companies: [
+                    { name: "阿波罗商务中心", industry: "商务服务", room: "整层" }
+                ],
+            },
+            {
+                number: 5,
+                name: "5层",
+                companies: [],
+            },
+            {
+                number: 6,
+                name: "6层",
+                companies: [
+                    { name: "河南豫资涨泉私募基金管理有限公司", industry: "投资管理", room: "602室" }
+                ],
+            },
+            {
+                number: 7,
+                name: "7层",
+                companies: [
+                    { name: "上海金牛投资管理咨询有限公司", industry: "投资咨询", room: "701B室" },
+                    { name: "中国银河证券股份有限公司", industry: "证券业", room: "702室" }
+                ],
+            },
+            {
+                number: 8,
+                name: "8层",
+                companies: [],
+            },
+            {
+                number: 9,
+                name: "9层",
+                companies: [
+                    { name: "双日奔时代（上海）贸易有限公司", industry: "贸易", room: "903室" }
+                ],
+            },
+            {
+                number: 10,
+                name: "10层",
+                companies: [],
+            },
+            {
+                number: 11,
+                name: "11层",
+                companies: [
+                    { name: "上海埃玛森化学品有限公司", industry: "化工", room: "1101室" },
+                    { name: "遨盛（上海）贸易有限公司", industry: "贸易", room: "1102-1103室" }
+                ],
+            },
+            {
+                number: 12,
+                name: "12层",
+                companies: [
+                    { name: "欧立恩拓电机商贸（上海）有限公司", industry: "电机商贸", room: "整层" }
+                ],
+            },
+            {
+                number: 13,
+                name: "13层",
+                companies: [],
+            },
+            {
+                number: 14,
+                name: "14层",
+                companies: [],
+            },
+            {
+                number: 15,
+                name: "15层",
+                companies: [
+                    { name: "帝业技凯（上海）国际贸易有限公司", industry: "贸易", room: "整层" }
+                ],
+            },
+            {
+                number: 16,
+                name: "16层",
+                companies: [
+                    { name: "努比亚太有限公司", industry: "投资", room: "1601A室" },
+                    { name: "东远食品（上海）有限公司", industry: "食品", room: "1601B室" },
+                    { name: "锦灏集团（上海）", industry: "集团", room: "1601C室" },
+                    { name: "上海振瀚信息科技有限公司", industry: "信息科技", room: "1602室" },
+                    { name: "超品贸易（上海）有限公司", industry: "贸易", room: "1603A室" },
+                    { name: "嘉麒房地产开发（上海）有限公司", industry: "房地产", room: "1603B室" },
+                    { name: "上海嘉麒物业管理有限公司", industry: "物业管理", room: "1603B室" }
+                ],
+            },
+            {
+                number: 17,
+                name: "17层",
+                companies: [
+                    { name: "永丰银行（中国）有限公司上海分行", industry: "银行业", room: "整层" }
+                ],
+            },
+            {
+                number: 18,
+                name: "18层",
+                companies: [
+                    { name: "上海博观投资管理有限公司", industry: "投资管理", room: "1801-1802室" },
+                    { name: "永丰金证券（亚洲）有限公司上海代表处", industry: "证券", room: "1803A室" },
+                    { name: "帅特国际贸易上海有限公司", industry: "贸易", room: "1803B室" }
+                ],
+            },
+            {
+                number: 19,
+                name: "19层",
+                companies: [
+                    { name: "爱史科电子贸易（上海）有限公司", industry: "电子贸易", room: "1901A室" },
+                    { name: "上海良瑄文化传播有限公司", industry: "文化传播", room: "1901B室" }
+                ],
+            },
+            {
+                number: 20,
+                name: "20层",
+                companies: [
+                    { name: "上海银行", industry: "银行业", room: "整层" }
+                ],
+            },
+            {
+                number: 21,
+                name: "21层",
+                companies: [
+                    { name: "义乌市易富力合资本管理有限公司", industry: "资本管理", room: "2101-2102室" },
+                    { name: "永丰金财务咨询（上海）有限公司", industry: "财务咨询", room: "2103B室" }
+                ],
+            },
+            {
+                number: 22,
+                name: "22层",
+                companies: [
+                    { name: "英特波科技（深圳）有限公司", industry: "科技", room: "2201A室" },
+                    { name: "上海一湃律师事务所", industry: "法律服务", room: "2202室" }
+                ],
+            }
+        ];
+
+        // 动态缩放相关变量
+        const targetWidth = 1920;  // 目标宽度
+        const targetHeight = 1080; // 目标高度
+        let resizeTimeout;
+
+        // 计算缩放比例
+        function calculateScale() {
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            // 计算宽度和高度的缩放比例
+            const scaleX = windowWidth / targetWidth;
+            const scaleY = windowHeight / targetHeight;
+
+            // 使用较小的比例以确保内容完全可见
+            const scale = Math.min(scaleX, scaleY);
+
+            // 限制最小和最大缩放比例
+            const minScale = 0.5;
+            const maxScale = 2.0;
+            const finalScale = Math.max(minScale, Math.min(maxScale, scale));
+
+            // 更新CSS变量
+            document.documentElement.style.setProperty('--base-scale', finalScale);
+
+            // 字体缩放稍微小一点，避免文字过大
+            const fontScale = Math.max(0.6, Math.min(1.5, finalScale * 0.9));
+            document.documentElement.style.setProperty('--font-scale', fontScale);
+
+            console.log(`窗口尺寸: ${windowWidth}x${windowHeight}, 缩放比例: ${finalScale.toFixed(3)}, 字体缩放: ${fontScale.toFixed(3)}`);
+        }
+
+        // 防抖动的窗口大小变化处理
+        function handleResize() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(calculateScale, 100);
+        }
+
+        // 轮播相关变量
+        let currentSlide = 0;
+        let autoCarouselInterval;
+        let idleTimer;
+        const autoPlayDelay = 3000; // 3秒自动切换
+        const idleDelay = 5000; // 5秒无操作后恢复自动轮播
+
+        // 生成楼层导航
+        function generateFloorNav() {
+            const floorList = document.querySelector('.floor-list');
+            floorList.innerHTML = '';
+
+            floors.forEach((floor, index) => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = `${floor.number}F`;
+                a.setAttribute('data-floor', floor.number);
+                a.setAttribute('data-index', index);
+
+                if (index === 0) {
+                    a.classList.add('active');
+                }
+
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const floorIndex = parseInt(this.getAttribute('data-index'));
+                    goToSlide(floorIndex);
+                    updateCurrentFloorInfo(floor.number);
+                    resetIdleTimer(); // 重置空闲计时器
+                });
+
+                li.appendChild(a);
+                floorList.appendChild(li);
+            });
+        }
+
+        // 生成轮播内容
+        function generateCarouselContent() {
+            const carouselSlide = document.querySelector('.carousel-slide');
+            carouselSlide.innerHTML = '';
+
+            floors.forEach((floor, index) => {
+                const floorCard = document.createElement('div');
+                floorCard.className = 'floor-info-card';
+                floorCard.id = `floor-${floor.number}`;
+                floorCard.setAttribute('data-index', index);
+
+                // 根据公司数量动态添加class
+                const companyCount = floor.companies ? floor.companies.length : 0;
+                if (companyCount === 0) {
+                    // 无公司，使用大号显示"暂无公司入驻"
+                    floorCard.classList.add('few-companies');
+                } else if (companyCount <= 3) {
+                    floorCard.classList.add('few-companies');
+                } else if (companyCount <= 5) {
+                    floorCard.classList.add('medium-companies');
+                } else {
+                    floorCard.classList.add('many-companies');
+                }
+
+                // 第一个卡片默认显示并添加active类
+                if (index === 0) {
+                    floorCard.classList.add('active');
+                } else {
+                    floorCard.style.display = 'none';
+                }
+
+                // 生成公司列表HTML
+                let companiesHTML = '';
+                if (floor.companies && floor.companies.length > 0) {
+                    companiesHTML = floor.companies.map(company => `
+                        <div class="company-card">
+                            <div class="company-name">${company.name}</div>
+                            <div class="company-industry">${company.industry}</div>
+                            <div class="company-room">${company.room}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    companiesHTML = `
+                        <div class="company-card" style="justify-content: center; text-align: center; padding: 40px;">
+                            <div class="company-name" style="color: #999;">暂无公司入驻</div>
+                            <div class="company-industry" style="color: #bbb;">空置楼层</div>
+                        </div>
+                    `;
+                }
+
+                floorCard.innerHTML = `
+                    <div class="floor-header">
+                        <div class="floor-number-large">${floor.number}</div>
+                        <div class="floor-name-large">${floor.name}</div>
+                    </div>
+
+                    <div class="companies-section">
+                        <h3>本层主要公司</h3>
+                        <div class="companies-grid">
+                            ${companiesHTML}
+                        </div>
+                    </div>
+                `;
+
+                carouselSlide.appendChild(floorCard);
+            });
+
+            // 生成轮播指示器
+            generateCarouselIndicators();
+        }
+
+        // 生成轮播指示器
+        function generateCarouselIndicators() {
+            const indicatorsContainer = document.querySelector('.carousel-indicators');
+            indicatorsContainer.innerHTML = '';
+
+            floors.forEach((floor, index) => {
+                const indicator = document.createElement('div');
+                indicator.className = 'carousel-indicator';
+                if (index === 0) {
+                    indicator.classList.add('active');
+                }
+                indicator.setAttribute('data-index', index);
+                indicator.addEventListener('click', () => {
+                    goToSlide(index);
+                    updateCurrentFloorInfo(floor.number);
+                    resetIdleTimer(); // 重置空闲计时器
+                });
+                indicatorsContainer.appendChild(indicator);
+            });
+        }
+
+        // 切换到指定轮播项
+        function goToSlide(slideIndex) {
+            // 确保索引在有效范围内
+            if (slideIndex < 0) slideIndex = floors.length - 1;
+            if (slideIndex >= floors.length) slideIndex = 0;
+
+            // 获取当前显示的卡片
+            const currentCard = document.querySelector('.floor-info-card.active');
+            const newCard = document.querySelector(`.floor-info-card[data-index="${slideIndex}"]`);
+
+            // 如果切换到同一张卡片，不做任何操作
+            if (currentCard && currentCard === newCard) return;
+
+            // 淡出当前卡片
+            if (currentCard) {
+                currentCard.classList.remove('active');
+                currentCard.classList.add('fade-out');
+            }
+
+            // 先隐藏所有卡片
+            document.querySelectorAll('.floor-info-card').forEach(card => {
+                card.style.display = 'none';
+                card.classList.remove('fade-out');
+            });
+
+            // 显示新卡片
+            if (newCard) {
+                newCard.style.display = 'block';
+                // 强制重绘，确保动画生效
+                void newCard.offsetWidth;
+
+                // 使用requestAnimationFrame确保动画流畅
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        newCard.classList.add('active');
+                    });
+                });
+            }
+
+            // 更新当前轮播索引
+            currentSlide = slideIndex;
+
+            // 更新导航高亮
+            updateNavHighlight();
+
+            // 更新指示器高亮
+            updateIndicators();
+
+            // 更新当前楼层显示
+            updateCurrentFloorDisplay();
+        }
+
+        // 更新导航高亮
+        function updateNavHighlight() {
+            document.querySelectorAll('.floor-list a').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            const currentLink = document.querySelector(`.floor-list a[data-index="${currentSlide}"]`);
+            if (currentLink) {
+                currentLink.classList.add('active');
+            }
+        }
+
+        // 更新指示器高亮
+        function updateIndicators() {
+            document.querySelectorAll('.carousel-indicator').forEach((indicator, index) => {
+                indicator.classList.remove('active');
+                if (index === currentSlide) {
+                    indicator.classList.add('active');
+                }
+            });
+        }
+
+        // 更新当前楼层显示
+        function updateCurrentFloorDisplay() {
+            const currentFloorDisplay = document.getElementById('current-floor-display');
+            const currentFloor = document.getElementById('current-floor');
+
+            if (currentFloorDisplay) {
+                currentFloorDisplay.textContent = floors[currentSlide].number;
+            }
+
+            if (currentFloor) {
+                currentFloor.textContent = floors[currentSlide].number;
+            }
+        }
+
+        // 更新当前楼层信息
+        function updateCurrentFloorInfo(floorNumber) {
+            const floorIndex = floors.findIndex(floor => floor.number === floorNumber);
+            if (floorIndex !== -1) {
+                goToSlide(floorIndex);
+            }
+        }
+
+        // 重置空闲计时器
+        function resetIdleTimer() {
+            // 清除旧的空闲计时器
+            if (idleTimer) {
+                clearTimeout(idleTimer);
+            }
+            // 启动新的空闲计时器，5秒后恢复自动轮播
+            idleTimer = setTimeout(() => {
+                stopAutoCarousel(); // 先停止当前轮播
+                startAutoCarousel(); // 重新开始自动轮播
+            }, idleDelay);
+        }
+
+        // 自动轮播功能
+        function startAutoCarousel() {
+            // 先清除旧的定时器，防止多个定时器同时运行
+            stopAutoCarousel();
+            // 创建新的定时器
+            autoCarouselInterval = setInterval(() => {
+                goToSlide(currentSlide + 1);
+            }, autoPlayDelay);
+        }
+
+        function stopAutoCarousel() {
+            clearInterval(autoCarouselInterval);
+            autoCarouselInterval = null;
+            // 停止轮播时也要清除空闲计时器
+            if (idleTimer) {
+                clearTimeout(idleTimer);
+                idleTimer = null;
+            }
+        }
+
+        // 初始化
+        function init() {
+            // 初始化动态缩放
+            calculateScale();
+
+            // 监听窗口大小变化
+            window.addEventListener('resize', handleResize);
+
+            // 生成楼层导航
+            generateFloorNav();
+
+            // 生成轮播内容
+            generateCarouselContent();
+
+            // 更新当前楼层显示
+            updateCurrentFloorDisplay();
+
+            // 延迟启动自动轮播，确保动画初始状态正确
+            setTimeout(() => {
+                startAutoCarousel();
+            }, 100);
+
+            // 添加全局点击监听，任何点击都重置空闲计时器
+            document.addEventListener('click', () => {
+                resetIdleTimer();
+            });
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
