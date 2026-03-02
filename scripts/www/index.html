@@ -1,11 +1,1271 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus</title>
-    </head>
-    <body>
-        PakePlus
-    </body>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>嘉麒大厦楼层导航</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --card-gradient: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+            --bg-gradient: linear-gradient(135deg, #667eea11 0%, #764ba211 50%, #f093fb11 100%);
+            --text-primary: #4a5568;
+            --text-secondary: #718096;
+            --text-accent: #667eea;
+            --shadow-sm: 0 2px 8px rgba(102, 126, 234, 0.08);
+            --shadow-md: 0 4px 16px rgba(102, 126, 234, 0.12);
+            --shadow-lg: 0 8px 32px rgba(102, 126, 234, 0.15);
+            --shadow-xl: 0 16px 48px rgba(102, 126, 234, 0.2);
+            --border-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "Roboto", sans-serif;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background: #f7fafc;
+            color: var(--text-primary);
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(240, 147, 251, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: bgPulse 15s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 1vh 1.5vw;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5vh;
+            padding: 1.5vh 2.5vw;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header:hover {
+            box-shadow: 0 20px 56px rgba(102, 126, 234, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+            transform: translateY(-2px);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(240, 147, 251, 0.1) 0%, transparent 50%);
+            animation: headerGlow 10s ease-in-out infinite;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+            pointer-events: none;
+        }
+
+        @keyframes headerGlow {
+            0%, 100% { 
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0.8;
+            }
+            50% { 
+                transform: translate(30%, 30%) rotate(180deg);
+                opacity: 1;
+            }
+        }
+
+        .header h1 {
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            margin-bottom: 0.8vh;
+            position: relative;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            letter-spacing: 3px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+            opacity: 0.95;
+            letter-spacing: 1.5px;
+            position: relative;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.8vh 2.5vw;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 0.5vh;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 2vw;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .floor-nav {
+            position: relative;
+            width: min(18vw, 300px);
+            background: var(--card-gradient);
+            border-radius: var(--border-radius);
+            padding: 2vh 1.5vw;
+            box-shadow: var(--shadow-lg), 0 0 0 1px rgba(102, 126, 234, 0.08);
+            height: 100%;
+            max-height: calc(100vh - 15vh);
+            overflow-y: auto;
+            backdrop-filter: blur(20px);
+            flex-shrink: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .floor-nav:hover {
+            box-shadow: var(--shadow-xl);
+        }
+
+        .floor-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .floor-nav h2 {
+            text-align: center;
+            margin-bottom: 2vh;
+            padding-bottom: 1.5vh;
+            border-bottom: 3px solid linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent);
+            color: var(--text-accent);
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .floor-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .floor-list li {
+            text-align: center;
+        }
+
+        .floor-list a {
+            display: block;
+            padding: 14px 8px;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floor-list a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .floor-list a:hover::before {
+            left: 100%;
+        }
+
+        .floor-list a:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .floor-list a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .carousel-container {
+            flex: 1;
+            background: var(--card-gradient);
+            border-radius: var(--border-radius);
+            padding: 2vh 2.5vw;
+            box-shadow: var(--shadow-lg), 0 0 0 1px rgba(102, 126, 234, 0.08);
+            position: relative;
+            min-height: 600px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .carousel-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .carousel-container::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .carousel-title {
+            text-align: center;
+            margin-bottom: 2.2vh;
+            padding-bottom: 1.6vh;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+            color: var(--text-accent);
+            position: relative;
+        }
+
+        .carousel-title h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .carousel-title p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .carousel-slide {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 0;
+            padding: 1.4vh 1.8vw;
+            background: linear-gradient(145deg, #f8f9ff 0%, #ffffff 50%, #f8f9ff 100%);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(102, 126, 234, 0.08);
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .floor-info-card {
+            background: var(--card-gradient);
+            border-radius: var(--border-radius);
+            padding: 1.4vh 2vw;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15), 0 0 0 1px rgba(102, 126, 234, 0.08);
+            border-left: 6px solid linear-gradient(180deg, #667eea, #764ba2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floor-info-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+            animation: cardGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes cardGlow {
+            0%, 100% { opacity: 0.5; transform: translate(0, 0); }
+            50% { opacity: 0.8; transform: translate(-10%, -10%); }
+        }
+
+        .floor-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.4vh;
+            padding-bottom: 1.2vh;
+            border-bottom: 2px dashed rgba(102, 126, 234, 0.15);
+            position: relative;
+        }
+
+        .floor-number-large {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin-right: 22px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.35);
+            position: relative;
+            z-index: 1;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+
+        .floor-number-large:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .floor-number-large::before {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+        }
+
+        .floor-number-large::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.3; }
+        }
+
+        .floor-name-large {
+            font-size: 2.2rem;
+            color: var(--text-accent);
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .companies-section {
+            margin-bottom: 1.4vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .companies-section h3 {
+            font-size: 1.5rem;
+            color: var(--text-accent);
+            margin-bottom: 1.2vh;
+            padding-bottom: 1vh;
+            border-bottom: 2px solid linear-gradient(90deg, #667eea, transparent);
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .company-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+            padding: 16px;
+            border-radius: 10px;
+            border-left: 3px solid linear-gradient(180deg, #667eea, #764ba2);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .company-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.4), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .company-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .company-card:hover {
+            transform: translateY(-8px) scale(1.03) rotateX(2deg);
+            box-shadow: 0 20px 48px rgba(102, 126, 234, 0.25);
+            background: linear-gradient(145deg, #ffffff 0%, #ffffff 50%, #f0f4ff 100%);
+        }
+
+        .company-card:hover::before {
+            opacity: 1;
+        }
+
+        .company-card:hover::after {
+            opacity: 1;
+        }
+
+        .company-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            line-height: 1.4;
+            letter-spacing: 0.3px;
+        }
+
+        .company-industry {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .company-room {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            padding: 5px 12px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(102, 126, 234, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .company-card:hover .company-room {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .floor-info-card {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease-out, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .floor-info-card.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .floor-info-card.fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2.5vh;
+            gap: 20px;
+        }
+
+        .carousel-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+        }
+
+        .carousel-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 28px rgba(102, 126, 234, 0.3);
+        }
+
+        .carousel-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 2.5vh;
+            padding: 15px;
+        }
+
+        .carousel-indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #e2e8f0, #cbd5e0);
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid #ffffff;
+        }
+
+        .carousel-indicator:hover {
+            transform: scale(1.25);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .carousel-indicator.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: scale(1.4);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.35);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1000;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .back-to-top::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: translateY(30px) scale(0.8); opacity: 0; }
+            50% { transform: translateY(-10px) scale(1.1); opacity: 0.8; }
+            70% { transform: translateY(5px) scale(0.95); opacity: 0.9; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .back-to-top:hover {
+            background: linear-gradient(135deg, #764ba2, #f093fb);
+            transform: translateY(-6px) scale(1.1);
+            box-shadow: 0 16px 40px rgba(102, 126, 234, 0.45);
+        }
+
+        .current-floor-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            z-index: 999;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            backdrop-filter: blur(15px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .current-floor-info:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 14px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .current-floor-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+            border-radius: 25px;
+        }
+
+        @media (max-width: 1024px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+
+            .floor-nav {
+                width: 100%;
+                position: static;
+                max-height: none;
+            }
+
+            .floor-list {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .floor-info-card {
+                padding: 2vh 2vw;
+            }
+
+            .floor-number-large {
+                font-size: 2.8rem;
+                width: 70px;
+                height: 70px;
+            }
+
+            .floor-name-large {
+                font-size: 2rem;
+            }
+
+            .companies-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+                letter-spacing: 2px;
+            }
+
+            .floor-list {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .floor-list a {
+                padding: 12px 6px;
+                font-size: 1rem;
+            }
+
+            .floor-number-large {
+                font-size: 2.2rem;
+                width: 60px;
+                height: 60px;
+                margin-right: 15px;
+            }
+
+            .floor-name-large {
+                font-size: 1.6rem;
+            }
+
+            .companies-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .back-to-top {
+                width: 55px;
+                height: 55px;
+                font-size: 22px;
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .current-floor-info {
+                font-size: 0.95rem;
+                padding: 12px 20px;
+                top: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>嘉麒大厦楼层导航</h1>
+            <p>共22层 • 点击左侧楼层快速导航 • 右侧显示楼层公司信息</p>
+        </div>
+        
+        <div class="content-wrapper">
+            <nav class="floor-nav">
+                <h2>楼层导航</h2>
+                <ul class="floor-list">
+                    <!-- 楼层导航列表将由JavaScript生成 -->
+                </ul>
+            </nav>
+            
+            <div class="carousel-container">
+                <div class="carousel-title">
+                    <h2>楼层公司信息</h2>
+                    <p>当前显示楼层：<span id="current-floor-display">1</span>层</p>
+                </div>
+                
+                <div class="carousel-slide">
+                    <!-- 轮播内容将由JavaScript生成 -->
+                </div>
+                
+                <div class="carousel-indicators">
+                    <!-- 轮播指示器将由JavaScript生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="current-floor-info">
+            当前楼层: <span id="current-floor">1</span>层
+        </div>
+    </div>
+    
+    <div class="back-to-top" title="返回顶部">↑</div>
+
+    <script>
+        // 楼层数据 - 包含每层的公司信息
+        const floors = [
+            {
+                number: 1,
+                name: "1层",
+                companies: [
+                    { name: "嘉麒大厦前台接待服务中心", industry: "接待服务", room: "大堂中央" },
+                    { name: "汇丰银行（中国）有限公司上海分行", industry: "银行业", room: "101室" },
+                    { name: "永丰银行（中国）有限公司上海分行", industry: "银行业", room: "102室" }
+                ],
+            },
+            {
+                number: 2,
+                name: "2层",
+                companies: [
+                    { name: "汇丰银行（中国）有限公司上海分行", industry: "银行业", room: "201室" },
+                    { name: "永丰银行（中国）有限公司上海分行", industry: "银行业", room: "202室" }
+                ],
+            },
+            {
+                number: 3,
+                name: "3层",
+                companies: [
+                    { name: "易络盟电子（中国）有限公司", industry: "电子", room: "整层" }
+                ],
+            },
+            {
+                number: 4,
+                name: "4层",
+                companies: [
+                    { name: "阿波罗商务中心", industry: "商务服务", room: "整层" }
+                ],
+            },
+            {
+                number: 6,
+                name: "6层",
+                companies: [
+                    { name: "河南豫资涨泉私募基金管理有限公司", industry: "投资管理", room: "602室" }
+                ],
+            },
+            {
+                number: 7,
+                name: "7层",
+                companies: [
+                    { name: "上海金牛投资管理咨询有限公司", industry: "投资咨询", room: "701B室" },
+                    { name: "中国银河证券股份有限公司", industry: "证券业", room: "702室" }
+                ],
+            },
+            {
+                number: 8,
+                name: "8层",
+                companies: [],
+            },
+            {
+                number: 9,
+                name: "9层",
+                companies: [
+                    { name: "双日奔时代（上海）贸易有限公司", industry: "贸易", room: "903室" }
+                ],
+            },
+            {
+                number: 10,
+                name: "10层",
+                companies: [],
+            },
+            {
+                number: 11,
+                name: "11层",
+                companies: [
+                    { name: "上海埃玛森化学品有限公司", industry: "化工", room: "1101室" },
+                    { name: "遨盛（上海）贸易有限公司", industry: "贸易", room: "1102-1103室" }
+                ],
+            },
+            {
+                number: 12,
+                name: "12层",
+                companies: [
+                    { name: "欧立恩拓电机商贸（上海）有限公司", industry: "电机商贸", room: "整层" }
+                ],
+            },
+            {
+                number: 15,
+                name: "15层",
+                companies: [
+                    { name: "帝业技凯（上海）国际贸易有限公司", industry: "国际贸易", room: "整层" }
+                ],
+            },
+            {
+                number: 16,
+                name: "16层",
+                companies: [
+                    { name: "努比亚太有限公司", industry: "投资", room: "1601A室" },
+                    { name: "东远食品（上海）有限公司", industry: "食品", room: "1601B室" },
+                    { name: "锦灏集团（上海）", industry: "集团", room: "1601C室" },
+                    { name: "上海振瀚信息科技有限公司", industry: "信息科技", room: "1602室" },
+                    { name: "超品贸易（上海）有限公司", industry: "贸易", room: "1603A室" },
+                    { name: "嘉麒房地产开发（上海）有限公司", industry: "房地产", room: "1603B室" },
+                    { name: "上海嘉麒物业管理有限公司", industry: "物业管理", room: "1603B室" }
+                ],
+            },
+            {
+                number: 17,
+                name: "17层",
+                companies: [
+                    { name: "永丰银行（中国）有限公司上海分行", industry: "银行业", room: "整层" }
+                ],
+            },
+            {
+                number: 18,
+                name: "18层",
+                companies: [
+                    { name: "上海博观投资管理有限公司", industry: "投资管理", room: "1801-1802室" },
+                    { name: "永丰金证券（亚洲）有限公司上海代表处", industry: "证券", room: "1803A室" },
+                    { name: "帅特国际贸易上海有限公司", industry: "贸易", room: "1803B室" }
+                ],
+            },
+            {
+                number: 19,
+                name: "19层",
+                companies: [
+                    { name: "爱史科电子贸易（上海）有限公司", industry: "电子贸易", room: "1901A室" },
+                    { name: "上海良瑄文化传播有限公司", industry: "文化传播", room: "1901B室" },
+                    { name: "杭州观远数据有限公司", industry: "数据", room: "1902室" },
+                    { name: "上海爱丽丝服装辅料有限公司", industry: "服装辅料", room: "1903B室" }
+                ],
+            },
+            {
+                number: 20,
+                name: "20层",
+                companies: [
+                    { name: "上海银行", industry: "银行业", room: "整层" }
+                ],
+            },
+            {
+                number: 21,
+                name: "21层",
+                companies: [
+                    { name: "义乌市易富力合资本管理有限公司", industry: "资本管理", room: "2101-2102室" },
+                    { name: "永丰金财务咨询（上海）有限公司", industry: "财务咨询", room: "2103B室" }
+                ],
+            },
+            {
+                number: 22,
+                name: "22层",
+                companies: [
+                    { name: "英特波科技（深圳）有限公司", industry: "科技", room: "2201A室" },
+                    { name: "上海一湃律师事务所", industry: "法律服务", room: "2202室" }
+                ],
+            }
+        ];
+
+        // 轮播相关变量
+        let currentSlide = 0;
+        let autoCarouselInterval;
+        const autoPlayDelay = 3000; // 3秒自动切换（已禁用）
+        let autoPlayEnabled = false; // 自动轮播开关（已禁用）
+        
+        // 生成楼层导航
+        function generateFloorNav() {
+            const floorList = document.querySelector('.floor-list');
+            floorList.innerHTML = '';
+            
+            floors.forEach((floor, index) => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#`;
+                a.textContent = `${floor.number}F`;
+                a.setAttribute('data-floor', floor.number);
+                a.setAttribute('data-index', index);
+                
+                if (index === 0) {
+                    a.classList.add('active');
+                }
+                
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const floorIndex = parseInt(this.getAttribute('data-index'));
+                    goToSlide(floorIndex);
+                    updateCurrentFloorInfo(floor.number);
+                    // 点击后暂停轮播3秒
+                    pauseCarouselForDelay();
+                });
+                
+                li.appendChild(a);
+                floorList.appendChild(li);
+            });
+        }
+        
+        // 生成轮播内容
+        function generateCarouselContent() {
+            const carouselSlide = document.querySelector('.carousel-slide');
+            carouselSlide.innerHTML = '';
+            
+            floors.forEach((floor, index) => {
+                const floorCard = document.createElement('div');
+                floorCard.className = 'floor-info-card';
+                floorCard.id = `floor-${floor.number}`;
+                floorCard.setAttribute('data-index', index);
+
+                // 第一个卡片默认显示并添加active类
+                if (index === 0) {
+                    floorCard.classList.add('active');
+                } else {
+                    floorCard.style.display = 'none';
+                }
+                
+                // 生成公司列表HTML
+                const companiesHTML = floor.companies.map(company => `
+                    <div class="company-card">
+                        <div class="company-name">${company.name}</div>
+                        <div class="company-industry">${company.industry}</div>
+                        <div class="company-room">${company.room}</div>
+                    </div>
+                `).join('');
+                
+                floorCard.innerHTML = `
+                    <div class="floor-header">
+                        <div class="floor-number-large">${floor.number}</div>
+                        <div class="floor-name-large">${floor.name}</div>
+                    </div>
+                    
+                    <div class="companies-section">
+                        <h3>本层主要公司</h3>
+                        <div class="companies-grid">
+                            ${companiesHTML}
+                        </div>
+                    </div>
+                `;
+                
+                carouselSlide.appendChild(floorCard);
+            });
+            
+            // 生成轮播指示器
+            generateCarouselIndicators();
+        }
+        
+        // 生成轮播指示器
+        function generateCarouselIndicators() {
+            const indicatorsContainer = document.querySelector('.carousel-indicators');
+            indicatorsContainer.innerHTML = '';
+            
+            floors.forEach((floor, index) => {
+                const indicator = document.createElement('div');
+                indicator.className = 'carousel-indicator';
+                if (index === 0) {
+                    indicator.classList.add('active');
+                }
+                indicator.setAttribute('data-index', index);
+                indicator.addEventListener('click', () => {
+                    goToSlide(index);
+                    updateCurrentFloorInfo(floor.number);
+                });
+                indicatorsContainer.appendChild(indicator);
+            });
+        }
+        
+        // 切换到指定轮播项
+        function goToSlide(slideIndex) {
+            // 确保索引在有效范围内
+            if (slideIndex < 0) slideIndex = floors.length - 1;
+            if (slideIndex >= floors.length) slideIndex = 0;
+
+            // 获取当前显示的卡片
+            const currentCard = document.querySelector('.floor-info-card.active');
+            const newCard = document.querySelector(`.floor-info-card[data-index="${slideIndex}"]`);
+
+            // 如果切换到同一张卡片，不做任何操作
+            if (currentCard && currentCard === newCard) return;
+
+            // 淡出当前卡片
+            if (currentCard) {
+                currentCard.classList.remove('active');
+                currentCard.classList.add('fade-out');
+            }
+
+            // 先隐藏所有卡片
+            document.querySelectorAll('.floor-info-card').forEach(card => {
+                card.style.display = 'none';
+                card.classList.remove('fade-out');
+            });
+
+            // 显示新卡片
+            if (newCard) {
+                newCard.style.display = 'block';
+                // 强制重绘，确保动画生效
+                void newCard.offsetWidth;
+
+                // 使用requestAnimationFrame确保动画流畅
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        newCard.classList.add('active');
+                    });
+                });
+            }
+
+            // 更新当前轮播索引
+            currentSlide = slideIndex;
+
+            // 更新导航高亮
+            updateNavHighlight();
+
+            // 更新指示器高亮
+            updateIndicators();
+
+            // 更新当前楼层显示
+            updateCurrentFloorDisplay();
+        }
+        
+        // 更新导航高亮
+        function updateNavHighlight() {
+            document.querySelectorAll('.floor-list a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const currentLink = document.querySelector(`.floor-list a[data-index="${currentSlide}"]`);
+            if (currentLink) {
+                currentLink.classList.add('active');
+            }
+        }
+        
+        // 更新指示器高亮
+        function updateIndicators() {
+            document.querySelectorAll('.carousel-indicator').forEach((indicator, index) => {
+                indicator.classList.remove('active');
+                if (index === currentSlide) {
+                    indicator.classList.add('active');
+                }
+            });
+        }
+        
+        // 更新当前楼层显示
+        function updateCurrentFloorDisplay() {
+            const currentFloorDisplay = document.getElementById('current-floor-display');
+            const currentFloor = document.getElementById('current-floor');
+            
+            if (currentFloorDisplay) {
+                currentFloorDisplay.textContent = floors[currentSlide].number;
+            }
+            
+            if (currentFloor) {
+                currentFloor.textContent = floors[currentSlide].number;
+            }
+        }
+        
+        // 更新当前楼层信息
+        function updateCurrentFloorInfo(floorNumber) {
+            const floorIndex = floors.findIndex(floor => floor.number === floorNumber);
+            if (floorIndex !== -1) {
+                goToSlide(floorIndex);
+            }
+        }
+
+        // 暂停轮播指定时间后恢复（已禁用）
+        let pauseTimer;
+        const pauseDelay = 3000; // 3秒后恢复轮播
+        function pauseCarouselForDelay() {
+            // 自动轮播已禁用，不执行暂停逻辑
+            if (!autoPlayEnabled) {
+                return;
+            }
+            stopAutoCarousel();
+            if (pauseTimer) {
+                clearTimeout(pauseTimer);
+            }
+            pauseTimer = setTimeout(() => {
+                pauseTimer = null;
+                startAutoCarousel();
+            }, pauseDelay);
+        }
+
+        // 自动轮播功能
+        function startAutoCarousel() {
+            // 自动轮播已禁用，直接返回
+            if (!autoPlayEnabled) {
+                return;
+            }
+            // 如果正在暂停，不启动
+            if (pauseTimer) {
+                return;
+            }
+            // 先清除旧的定时器，防止多个定时器同时运行
+            stopAutoCarousel();
+            // 创建新的定时器
+            autoCarouselInterval = setInterval(() => {
+                goToSlide(currentSlide + 1);
+            }, autoPlayDelay);
+        }
+
+        function stopAutoCarousel() {
+            clearInterval(autoCarouselInterval);
+            autoCarouselInterval = null;
+        }
+        
+        // 返回顶部功能
+        function setupBackToTop() {
+            const backToTop = document.querySelector('.back-to-top');
+            backToTop.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 500) {
+                    backToTop.classList.add('show');
+                } else {
+                    backToTop.classList.remove('show');
+                }
+            });
+        }
+        
+        // 初始化
+        function init() {
+            generateFloorNav();
+            generateCarouselContent();
+            setupBackToTop();
+            updateCurrentFloorDisplay();
+
+            // 延迟启动自动轮播，确保动画初始状态正确
+            setTimeout(() => {
+                startAutoCarousel();
+            }, 100);
+
+            // 鼠标悬停时暂停自动轮播
+            const carouselContainer = document.querySelector('.carousel-container');
+            carouselContainer.addEventListener('mouseenter', () => {
+                stopAutoCarousel();
+            });
+
+            carouselContainer.addEventListener('mouseleave', () => {
+                startAutoCarousel();
+            });
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
 </html>
